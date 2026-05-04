@@ -2,8 +2,9 @@ name: Daily Survival Game Booking Report
 
 on:
   schedule:
-    # 毎日 19:00 JST (= 10:00 UTC) に実行
-    - cron: "0 10 * * *"
+    # 毎日 19:15 JST (= 10:15 UTC) に実行
+    # 注: GitHub Actions の cron は毎時0分が高負荷で遅延しやすいため15分にずらす
+    - cron: "15 10 * * *"
   workflow_dispatch:
 
 jobs:
