@@ -1,6 +1,6 @@
 # survival-game-booking-report
 
-福岡県内のサバゲーフィールド10箇所の週末予約状況をスクレイピングし、天気予報と合わせてLINEで通知するツール。
+福岡県内のサバゲーフィールド10箇所の予約状況 (土日・祝日) をスクレイピングし、天気予報と祝日情報と合わせてLINEで通知するツール。
 
 ## 対象フィールド
 
@@ -86,7 +86,10 @@ GitHub Actions で毎日 19:00 JST に自動実行する設定が `.github/workf
 │   └── output.py                    #   結果の表示・JSON保存
 │
 ├── weather/                         # 天気予報
-│   └── forecast.py                  #   気象庁API (福岡県) から週末天気を取得
+│   └── forecast.py                  #   気象庁API (福岡県) から予約対象日の天気を取得
+│
+├── holiday/                         # 日本の祝日判定 (jpholiday使用)
+│   └── jp.py                        #   is_holiday, holiday_name, target_dates (土日+祝日)
 │
 └── notification/                    # LINE通知
     ├── formatter.py                 #   スクレイピング結果 + 天気 → LINE用テキスト整形

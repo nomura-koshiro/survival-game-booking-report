@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from core.models import FieldResult
+from holiday import target_date_set
 from scraping.base import BaseFieldScraper
 from scraping.output import print_field_result, save_results_json
 
@@ -69,15 +70,14 @@ class ScraperFacade:
                 try:
                     result = await scraper.scrape(page)
                     all_results.append(result)
-                    weekend_count = sum(
-                        1
-                        for r in result.reservations
-                        if r.day_of_week in {"土", "日"}
+                    targets = target_date_set()
+                    target_count = sum(
+                        1 for r in result.reservations if r.date in targets
                     )
                     if result.error:
                         print(f"  ⚠ {result.error[:80]}")
                     print(
-                        f"  ✓ 取得件数: {len(result.reservations)}件 (うち週末: {weekend_count}件)"
+                        f"  ✓ 取得件数: {len(result.reservations)}件 (うち土日・祝日: {target_count}件)"
                     )
                 except Exception as e:
                     all_results.append(

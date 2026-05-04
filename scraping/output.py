@@ -5,6 +5,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 from core.models import FieldResult
+from holiday import target_date_set
 
 
 def print_field_result(result: FieldResult) -> None:
@@ -21,10 +22,11 @@ def print_field_result(result: FieldResult) -> None:
             print("  予約情報なし")
         return
 
-    weekend_res = [r for r in result.reservations if r.day_of_week in {"土", "日"}]
-    if weekend_res:
-        print(f"\n  【週末の予約状況】({len(weekend_res)}件)")
-        for r in sorted(weekend_res, key=lambda x: x.date):
+    targets = target_date_set()
+    target_res = [r for r in result.reservations if r.date in targets]
+    if target_res:
+        print(f"\n  【予約対象日 (土日・祝日)】({len(target_res)}件)")
+        for r in sorted(target_res, key=lambda x: x.date):
             date_str = r.date if r.date else "日付不明"
             parts = [f"    {date_str}({r.day_of_week})"]
             if r.session and r.session != "終日":

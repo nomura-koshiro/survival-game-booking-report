@@ -1,13 +1,14 @@
-"""気象庁APIから福岡の週末天気予報を取得する。"""
+"""気象庁APIから福岡の予約対象日 (土日 + 祝日) の天気予報を取得する。"""
 
 from __future__ import annotations
 
 import json
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from core.constants import DOW_LABELS
 from core.models import DayWeather
+from holiday import holiday_name, target_dates
 
 #: 気象庁 天気予報API (福岡県: 400000)
 JMA_FORECAST_URL = "https://www.jma.go.jp/bosai/forecast/data/forecast/400000.json"
@@ -53,18 +54,6 @@ def _decode_weather_code(code: str) -> tuple[str, str]:
     return _WEATHER_EMOJI_FALLBACK.get(first, ("❓", "不明"))
 
 
-def _next_weekend() -> list[str]:
-    """次の土曜・日曜の日付を YYYY-MM-DD で返す。"""
-    today = datetime.now()
-    days_until_saturday = (5 - today.weekday()) % 7
-    # 土曜の夕方以降は翌週
-    if days_until_saturday == 0 and today.hour >= 18:
-        days_until_saturday = 7
-    saturday = today + timedelta(days=days_until_saturday)
-    sunday = saturday + timedelta(days=1)
-    return [saturday.strftime("%Y-%m-%d"), sunday.strftime("%Y-%m-%d")]
-
-
 def _find_area(areas: list[dict], keyword: str = "福岡") -> dict | None:
     """areas リストから keyword を含むエリアを返す。"""
     return next((a for a in areas if keyword in a["area"]["name"]), None)
@@ -101,13 +90,14 @@ def _extract_from_short_term(
     return info
 
 
-def fetch_fukuoka_weekend_weather() -> list[DayWeather]:
-    """気象庁APIから次の週末の福岡の天気予報を取得する。
+def fetch_fukuoka_target_weather() -> list[DayWeather]:
+    """気象庁APIから福岡の予約対象日 (土日 + 祝日) の天気予報を取得する。
 
     短期予報 (2-3日先) と週間予報 (7日先) の両方を参照し、
     短期予報に該当日があればそちらを優先する。
+    予報範囲外の日付は不明値で返す。
     """
-    target_dates = _next_weekend()
+    targets = target_dates()
 
     req = urllib.request.Request(
         JMA_FORECAST_URL,
@@ -128,7 +118,7 @@ def fetch_fukuoka_weekend_weather() -> list[DayWeather]:
     temp_dates = [d[:10] for d in temp_ts["timeDefines"]]
 
     results: list[DayWeather] = []
-    for target in target_dates:
+    for target in targets:
         weather_code = ""
         pop = ""
         temp_max = ""
@@ -173,6 +163,7 @@ def fetch_fukuoka_weekend_weather() -> list[DayWeather]:
                 pop=pop,
                 temp_max=temp_max,
                 temp_min=temp_min,
+                holiday_name=holiday_name(dt.date()),
             )
         )
 

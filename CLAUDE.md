@@ -2,7 +2,7 @@
 
 ## プロジェクト概要
 
-福岡サバゲーフィールド10箇所の週末予約状況をPlaywrightでスクレイピングし、気象庁APIの天気予報と合わせてLINE Messaging APIで通知するPythonツール。
+福岡サバゲーフィールド10箇所の予約状況 (土日・祝日) をPlaywrightでスクレイピングし、気象庁APIの天気予報と日本の祝日情報と合わせてLINE Messaging APIで通知するPythonツール。
 
 ## 実行コマンド
 
@@ -24,13 +24,14 @@ uv run python main.py
 - `fields/` — フィールド別スクレイパー。すべて `BaseFieldScraper` を継承し `_do_scrape()` を実装
 - `scraping/` — スクレイピング基盤。`BaseFieldScraper` (Template Method), `GCalFieldScraper` (GCal iframe共通), `ScraperFacade` (統括)
 - `weather/` — 気象庁API天気予報取得
+- `holiday/` — 日本の祝日判定 + 「予約対象日 (土日 + 祝日)」の集合提供 (jpholiday使用)
 - `notification/` — LINE用メッセージ整形 + LINE Messaging API送信
 
 ## コーディング規約
 
 - Python 3.13+、型ヒント必須
 - import は絶対パス (`from core.models import ...`, `from scraping.base import ...`)
-- 外部ライブラリは最小限 (Playwright のみ)。HTTP通信は `urllib.request` を直接使用
+- 依存関係は `pyproject.toml` で管理し `uv.lock` で固定。必要なライブラリは積極的に採用してよい
 - 環境変数は `.env` ファイルで管理。`.env` は gitignore 済み
 
 ## 新しいフィールドの追加手順
@@ -53,4 +54,5 @@ uv run python main.py
 
 - スクレイピング対象サイトの構造変更で動作しなくなることがある。エラー時は対象サイトのHTML構造を確認すること
 - LINE テキストメッセージの上限は 5000 文字
-- 週末 (土・日) のデータのみ抽出。平日データは破棄される
+- 予約対象日 (土・日 + 日本の祝日) のデータのみ抽出する。それ以外の平日データは破棄される
+- 「対象日」の判定範囲は `holiday/jp.py::target_dates()` で集中管理 (今日 〜 次の月曜まで)

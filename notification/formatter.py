@@ -159,9 +159,10 @@ def _format_field_line(
 
 
 def _format_date_header(w: DayWeather) -> str:
-    """天気付き日付ヘッダー。"""
+    """天気付き日付ヘッダー。祝日の場合は祝日名を併記する。"""
     month_day = f"{int(w.date[5:7])}/{int(w.date[8:10])}"
-    header = f"📅 {month_day}({w.day_of_week}) {w.weather_emoji}{w.weather_text}"
+    holiday_tag = f"🎌{w.holiday_name} " if w.holiday_name else ""
+    header = f"📅 {month_day}({w.day_of_week}) {holiday_tag}{w.weather_emoji}{w.weather_text}"
     if w.temp_max and w.temp_min and w.temp_max != "-" and w.temp_min != "-":
         header += f" {w.temp_max}/{w.temp_min}℃"
     elif w.temp_max and w.temp_max != "-":
@@ -176,7 +177,7 @@ def format_message(
     weather: list[DayWeather],
 ) -> str:
     """スクレイピング結果 + 天気予報 -> LINE 送信用テキスト。"""
-    lines: list[str] = ["🔫 今週末の予約状況", ""]
+    lines: list[str] = ["🔫 今週の予約状況 (土日・祝日)", ""]
 
     for w in weather:
         lines.append(_format_date_header(w))

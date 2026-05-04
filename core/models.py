@@ -64,3 +64,5 @@ class DayWeather:
     pop: str
     temp_max: str
     temp_min: str
+    holiday_name: str = ""
+    """祝日名 (祝日でなければ空文字)。"""

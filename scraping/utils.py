@@ -3,8 +3,8 @@
 from datetime import datetime, timedelta
 from typing import Any
 
-from core.constants import DOW_LABELS, WEEKEND_JS_DAYS
 from core.models import DayReservation
+from holiday import target_date_set
 
 
 def guess_year(month: int) -> int:
@@ -35,9 +35,9 @@ def js_row_to_day_reservation(
 ) -> DayReservation | None:
     """JavaScript スクレイピング結果の辞書を DayReservation に変換する。
 
-    週末 (土・日) 以外のデータは None を返して破棄する。
+    予約対象日 (土日 + 祝日) 以外のデータは None を返して破棄する。
     """
-    if row["dow"] not in WEEKEND_JS_DAYS:
+    if row["date"] not in target_date_set():
         return None
     return DayReservation(
         date=row["date"],

@@ -3,9 +3,6 @@
 #: 月曜始まりの曜日ラベル。Python の datetime.weekday() と同じ順序 (0=月)
 DOW_LABELS: list[str] = ["月", "火", "水", "木", "金", "土", "日"]
 
-#: 週末と判定する JavaScript の getDay() 値 (0=日曜, 6=土曜)
-WEEKEND_JS_DAYS: frozenset[int] = frozenset({0, 6})
-
 #: 全角数字 → 半角数字変換テーブル
 ZEN_TO_HAN: dict[int, int] = str.maketrans("０１２３４５６７８９", "0123456789")
 

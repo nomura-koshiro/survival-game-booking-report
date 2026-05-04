@@ -46,7 +46,7 @@ async def _run() -> None:
     from fields import ALL_SCRAPERS
     from notification import format_message, send_line_message
     from scraping.facade import ScraperFacade
-    from weather.forecast import fetch_fukuoka_weekend_weather
+    from weather.forecast import fetch_fukuoka_target_weather
 
     # 1. スクレイピング
     facade = ScraperFacade()
@@ -56,9 +56,10 @@ async def _run() -> None:
     # 2. 天気取得
     print("\n▶ 天気予報を取得中...")
     try:
-        weather = fetch_fukuoka_weekend_weather()
+        weather = fetch_fukuoka_target_weather()
         for w in weather:
-            print(f"  {w.date}({w.day_of_week}): {w.weather_emoji} {w.weather_text} {w.temp_max}℃/{w.temp_min}℃")
+            holiday_label = f" [{w.holiday_name}]" if w.holiday_name else ""
+            print(f"  {w.date}({w.day_of_week}){holiday_label}: {w.weather_emoji} {w.weather_text} {w.temp_max}℃/{w.temp_min}℃")
     except Exception as e:
         print(f"  ⚠ 天気取得失敗: {e}")
         weather = []

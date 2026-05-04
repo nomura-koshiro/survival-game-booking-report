@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from playwright.async_api import Page
 
-from core.constants import WEEKEND_JS_DAYS
 from core.models import DayReservation, FieldResult
+from holiday import target_date_set
 from scraping.base import BaseFieldScraper
 
 
@@ -62,8 +62,9 @@ class BuggyLandScraper(BaseFieldScraper):
             return results;
         }""")
 
+        targets = target_date_set()
         for row in data:
-            if row["dow"] not in WEEKEND_JS_DAYS:
+            if row["date"] not in targets:
                 continue
             result.reservations.append(
                 DayReservation(
