@@ -7,11 +7,14 @@
 ## 実行コマンド
 
 ```bash
-# 実行 (スクレイピング → 天気取得 → LINE送信)
-uv run --with playwright python main.py
+# 依存関係インストール (pyproject.toml + uv.lock から)
+uv sync
 
 # Playwright ブラウザインストール
-uv run --with playwright python -m playwright install chromium
+uv run python -m playwright install chromium
+
+# 実行 (スクレイピング → 天気取得 → LINE送信)
+uv run python main.py
 ```
 
 ## アーキテクチャ

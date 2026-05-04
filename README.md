@@ -32,24 +32,26 @@ LINE_CHANNEL_ACCESS_TOKEN=your_channel_access_token_here
 LINE_USER_ID=your_user_id_here
 ```
 
-### Playwright インストール
+### 依存関係インストール
 
 ```bash
-uv run --with playwright python -m playwright install chromium
+uv sync
+uv run python -m playwright install chromium
 ```
 
 ## 実行方法
 
 ```bash
-uv run --with playwright python main.py
+uv run python main.py
 ```
 
-## cron 設定例
+## 定期実行
 
-毎週金曜 8:00 に実行:
+GitHub Actions で毎日 19:00 JST に自動実行する設定が `.github/workflows/report.yml` に含まれている。
+ローカル cron で動かす場合の例 (毎週金曜 8:00):
 
 ```cron
-0 8 * * 5 cd /path/to/project && uv run --with playwright python3 main.py
+0 8 * * 5 cd /path/to/project && uv run python main.py
 ```
 
 ## ディレクトリ構成

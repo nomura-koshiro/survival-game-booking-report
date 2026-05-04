@@ -4,10 +4,11 @@
 
 使い方::
 
-    uv run --with playwright python main.py
+    uv sync
+    uv run python main.py
 
 crontab 設定例 (毎週金曜 8:00):
-    0 8 * * 5 cd /path/to/project && uv run --with playwright python3 main.py
+    0 8 * * 5 cd /path/to/project && uv run python main.py
 
 環境変数 (.env ファイルまたは export):
     LINE_CHANNEL_ACCESS_TOKEN=xxx
